@@ -8,6 +8,20 @@ Form::Form(QWidget *parent)
 {
     ui->setupUi(this);
     trans->reset();
+
+    const double a = qDegreesToRadians(45.0);
+    double sina = sin(a);
+    double cosa = cos(a);
+
+    QTransform scale(0.5, 0, 0, 1.0, 0, 0);
+    qDebug() << "scale:" << scale;
+    QTransform rotate(cosa, sina, -sina, cosa, 0, 0);
+    qDebug() << "rotate:" << rotate;
+    QTransform translate(1, 0, 0, 1, 50.0, 50.0);
+    qDebug() << "translate:" << translate;
+
+    QTransform transform = scale * rotate * translate;
+    qDebug() << "transform:" << transform;
 }
 
 Form::~Form()
@@ -31,8 +45,8 @@ void Form::updateDemo()
     DemoWidget *demo = static_cast<DemoWidget *>(ui->demo);
     demo->setTrans(trans.data());
     demo->update();
-    ui->result->append(QString("TranForm is invertible:%1").arg(trans->isInvertible()));
-    ui->result->append(QString("TranForm compute dx:%1; fy:%2").arg(trans->dx()).arg(trans->dy()));
+    // ui->result->append(QString("TranForm is invertible:%1").arg(trans->isInvertible()));
+    // ui->result->append(QString("TranForm compute dx:%1; fy:%2").arg(trans->dx()).arg(trans->dy()));
 }
 
 void Form::on_setTranslate_clicked()
@@ -81,6 +95,7 @@ void Form::on_reset_clicked()
     ui->setTranslate->setDisabled(false);
     ui->setRotate->setDisabled(false);
     ui->setScale->setDisabled(false);
+    ui->setShear->setDisabled(false);
 }
 
 
@@ -140,5 +155,18 @@ void Form::on_parse_clicked()
     }
 
     ui->result->append(QString("计算缩放比例 sx= %1;  sy = %2;").arg(scaleX).arg(scaleY));
+}
+
+
+void Form::on_setShear_clicked()
+{
+    qreal sh = ui->shearX->value(), sv = ui->shearY->value();
+    if (sh == 0 && sv == 0) {
+        return;
+    }
+    // ui->setShear->setDisabled(true);
+    trans->shear(sh, sv);
+    showTranForm(QString("set Shear: sh=%1; sv=%2").arg(sh).arg(sv));
+    updateDemo();
 }
 

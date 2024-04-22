@@ -36,6 +36,7 @@ private slots:
     void on_reset_clicked();
     void on_clear_clicked();
     void on_parse_clicked();
+    void on_setShear_clicked();
 };
 
 #endif // FORM_H
